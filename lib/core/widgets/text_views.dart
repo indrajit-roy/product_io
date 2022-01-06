@@ -22,5 +22,7 @@ class ProductIOText extends StatelessWidget {
 }
 
 class ProductIOTextStyle extends TextStyle {
-  const ProductIOTextStyle() : super();
+  const ProductIOTextStyle(
+      {Color? color, double? fontSize, FontWeight? fontWeight})
+      : super(color: color, fontSize: fontSize, fontWeight: fontWeight);
 }
