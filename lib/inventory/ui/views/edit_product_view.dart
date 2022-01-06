@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:product_io/inventory/ui/view_models/add_product_view_model.dart';
 import 'package:product_io/inventory/ui/view_models/edit_product_view_model.dart';
 import 'package:product_io/inventory/ui/widgets/buttons.dart';
 import 'package:product_io/inventory/ui/widgets/inventory_text_fields.dart';
@@ -14,7 +15,7 @@ class _EditProductViewState extends State<EditProductView> {
   late EditProductViewModel vm;
   @override
   void initState() {
-    vm = EditProductViewModel();
+    vm = widget is EditProductView ? EditProductViewModel() : AddProductViewModel();
     super.initState();
   }
 

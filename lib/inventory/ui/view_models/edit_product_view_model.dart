@@ -13,4 +13,6 @@ class EditProductViewModel {
 
   Future<void> init() async {}
   void dispose() {}
+
+  void onSubmit() {}
 }
