@@ -1,6 +1,7 @@
 import 'package:product_io/core/services/auth/firebase_auth_service.dart';
 import 'package:product_io/core/services/auth/models/product_io_user.dart';
 import 'package:product_io/core/services/product/models/product_io_product.dart';
+import 'package:product_io/core/services/product/product_service.dart';
 import 'package:product_io/inventory/domain/entities/product_entity.dart';
 
 class ProductIOServices {
@@ -9,6 +10,7 @@ class ProductIOServices {
   static ProductIOServices get singleton => _singleton ??= ProductIOServices._();
 
   final AuthServiceInterface auth = FirebaseAuthService();
+  final ProductServiceInterface product = ProductServiceFirebase();
 }
 
 class AuthState<T> {
@@ -26,6 +28,8 @@ abstract class AuthServiceInterface {
 }
 
 abstract class ProductServiceInterface {
-Future<ProductIOProduct> addProduct(ProductIONewProduct newProduct);
+  Future<ProductIOProduct> addProduct(ProductIONewProduct newProduct);
   Future<List<ProductIOProduct>> getProducts({String category});
+  Future<ProductIOProduct> getProduct({required String id});
+  Future<ProductIOProduct> setProduct({required ProductIOProduct product,required ProductIOProduct oldProduct});
 }

@@ -15,30 +15,19 @@ class ProductIOApp extends StatefulWidget {
 }
 
 class _ProductIOAppState extends State<ProductIOApp> {
-  StreamSubscription? authSubscription;
   void _initializeApp() async {
     await AppInitCalls()();
     if (ProductIOServices.singleton.auth.currentUser == null) {
+      debugPrint("Auth user null");
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
         return const SignInView();
       }));
     } else {
+      debugPrint("Auth user not null");
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
         return const InventoryView();
       }));
     }
-    authSubscription = ProductIOServices.singleton.auth.authState.listen((event) {
-      if (event.isAuthenticated) {
-        // route to inventory screen
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-          return const InventoryView();
-        }));
-      }
-      // route to sign in screen
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-        return const SignInView();
-      }));
-    });
   }
 
   @override
@@ -49,7 +38,6 @@ class _ProductIOAppState extends State<ProductIOApp> {
 
   @override
   void dispose() {
-    authSubscription?.cancel();
     super.dispose();
   }
 
