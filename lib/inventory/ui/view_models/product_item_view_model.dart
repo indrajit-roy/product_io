@@ -4,6 +4,8 @@ import 'package:product_io/core/common/product_io_ui_service.dart';
 import 'package:product_io/inventory/data/repositories/image_repository.dart';
 import 'package:product_io/inventory/domain/entities/product_entity.dart';
 import 'package:product_io/inventory/domain/use_cases/fetch_product_usecase.dart';
+import 'package:product_io/inventory/domain/use_cases/real_time_products.dart';
+import 'package:product_io/inventory/ui/views/product_records_view.dart';
 import 'package:product_io/inventory/ui/views/update_product_view.dart';
 import 'package:product_io/main.dart';
 import 'package:rxdart/rxdart.dart';
@@ -25,9 +27,13 @@ class ProductItemViewModel {
   Future<void> init() async {
     try {
       if (entity == null) {
-        isFetching.value = true;
+        if (!isFetching.isClosed) {
+          isFetching.value = true;
+        }
         entity ??= await fetchProduct(id: id);
-        isFetching.value = false;
+        if (!isFetching.isClosed) {
+          isFetching.value = false;
+        }
       }
     } on Exception catch (e) {
       debugPrint("Exception in fetching product $id, $e");
@@ -35,6 +41,14 @@ class ProductItemViewModel {
     } finally {
       if (isFetching.value == true) isFetching.value = false;
       _fetchImage();
+    }
+  }
+
+  Future<void> onItemTap() async {
+    if (entity != null) {
+      navigatorKey.currentState?.push<ProductEntity>(MaterialPageRoute(
+        builder: (context) => ProductRecordsView(id: id, currentEntity: entity!),
+      ));
     }
   }
 
@@ -46,10 +60,13 @@ class ProductItemViewModel {
       if (updatedEntity == null) return;
       isFetching.value = true;
       entity = updatedEntity;
+      RealTimeProducts().productUpdates.value = updatedEntity;
       isFetching.value = false;
       _fetchImage();
     }
   }
+
+  Future<void> onTap2() async {}
 
   void _fetchImage() async {
     final refPath = entity?.imageFilePath;
@@ -63,5 +80,8 @@ class ProductItemViewModel {
     }
   }
 
-  void dispose() {}
+  void dispose() {
+    isFetching.close();
+    isFetchingImage.close();
+  }
 }

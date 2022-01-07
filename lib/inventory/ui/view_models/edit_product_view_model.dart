@@ -1,9 +1,26 @@
+import 'package:flutter/widgets.dart';
 import 'package:product_io/core/common/product_io_ui_service.dart';
 import 'package:product_io/inventory/data/repositories/product_repository.dart';
 import 'package:product_io/inventory/domain/entities/product_entity.dart';
 import 'package:product_io/main.dart';
+import 'package:rxdart/rxdart.dart';
 
 enum WeightUnit { kilograms, pounds, grams, ounces }
+
+extension WeightUnitExt on WeightUnit {
+  String get abbr {
+    switch (this) {
+      case WeightUnit.kilograms:
+        return "kg";
+      case WeightUnit.pounds:
+        return "lbs";
+      case WeightUnit.grams:
+        return "gms";
+      case WeightUnit.ounces:
+        return "oz.";
+    }
+  }
+}
 
 class EditProductViewModel {
   String? itemName;
@@ -17,8 +34,11 @@ class EditProductViewModel {
   WeightUnit stockWeightUnit = WeightUnit.kilograms;
   String? imageFilePath;
 
+  final isUpdating = BehaviorSubject.seeded(false);
   Future<void> init() async {}
-  void dispose() {}
+  void dispose() {
+    isUpdating.close();
+  }
 
   void onSubmit() {}
 }
@@ -30,6 +50,8 @@ class UpdateProductViewModel extends EditProductViewModel {
     price = entity.price;
     discountedPrice = entity.discountedPrice;
     quantity = entity.quantity;
+    description = entity.description;
+    category = entity.category;
     weightUnit = entity.weightUnit;
     stockQuantity = entity.stockQuantity;
     stockWeightUnit = entity.stockWeightUnit;
@@ -42,6 +64,8 @@ class UpdateProductViewModel extends EditProductViewModel {
       discountedPrice != entity.discountedPrice ||
       quantity != entity.quantity ||
       weightUnit != entity.weightUnit ||
+      description != entity.description ||
+      category != entity.category ||
       stockQuantity != entity.stockQuantity ||
       stockWeightUnit != entity.stockWeightUnit ||
       imageFilePath != entity.imageFilePath;
@@ -49,6 +73,7 @@ class UpdateProductViewModel extends EditProductViewModel {
   @override
   void onSubmit() async {
     if (_didProductChange) {
+      isUpdating.value = true;
       final updatedProduct = await ProductRepository().setProduct(
           oldProduct: entity,
           product: ProductEntity(
@@ -56,11 +81,15 @@ class UpdateProductViewModel extends EditProductViewModel {
               itemName: itemName ?? entity.itemName,
               price: price ?? entity.price,
               discountedPrice: discountedPrice ?? entity.discountedPrice,
+              category: category ?? entity.category,
+              description: description ?? entity.description,
               quantity: quantity ?? entity.quantity,
               weightUnit: weightUnit,
               stockQuantity: stockQuantity ?? entity.stockQuantity,
               stockWeightUnit: stockWeightUnit,
-              imageFilePath: imageFilePath));
+              imageFilePath: imageFilePath,
+              date: DateTime.now()));
+      isUpdating.value = false;
       ProductIOUIService.showToast("Changes saved");
       navigatorKey.currentState?.pop<ProductEntity>(updatedProduct);
     } else {

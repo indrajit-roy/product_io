@@ -11,6 +11,7 @@ class ProductIONewProduct {
   double stockQuantity;
   String stockWeightUnit;
   String? imageFilePath;
+  DateTime date;
   ProductIONewProduct(
       {required this.itemName,
       required this.price,
@@ -21,7 +22,8 @@ class ProductIONewProduct {
       this.description,
       required this.stockQuantity,
       required this.stockWeightUnit,
-      this.imageFilePath});
+      this.imageFilePath,
+      required this.date});
 
   ProductIONewProduct copyWith({
     String? itemName,
@@ -34,6 +36,7 @@ class ProductIONewProduct {
     double? stockQuantity,
     String? stockWeightUnit,
     String? imageFilePath,
+    DateTime? date,
   }) {
     return ProductIONewProduct(
         itemName: itemName ?? this.itemName,
@@ -45,7 +48,8 @@ class ProductIONewProduct {
         description: description ?? this.description,
         stockQuantity: stockQuantity ?? this.stockQuantity,
         stockWeightUnit: stockWeightUnit ?? this.stockWeightUnit,
-        imageFilePath: imageFilePath ?? this.imageFilePath);
+        imageFilePath: imageFilePath ?? this.imageFilePath,
+        date: date ?? this.date);
   }
 
   Map<String, dynamic> toMap() {
@@ -59,7 +63,8 @@ class ProductIONewProduct {
       'description': description,
       'stockQuantity': stockQuantity,
       'stockWeightUnit': stockWeightUnit,
-      'imageFilePath': imageFilePath
+      'imageFilePath': imageFilePath,
+      'date': date.toIso8601String()
     };
   }
 
@@ -74,7 +79,8 @@ class ProductIONewProduct {
         description: map['description'],
         stockQuantity: map['stockQuantity']?.toDouble() ?? 0.0,
         stockWeightUnit: map['stockWeightUnit'] ?? '',
-        imageFilePath: map['imageFilePath']);
+        imageFilePath: map['imageFilePath'],
+        date: DateTime.tryParse(map['date'] ?? "") ?? DateTime.utc(2022));
   }
 
   String toJson() => json.encode(toMap());
@@ -133,6 +139,7 @@ class ProductIOProduct extends ProductIONewProduct {
       required String stockWeightUnit,
       required this.id,
       String? imageFilePath,
+      required DateTime date,
       this.imageUrl})
       : super(
             itemName: itemName,
@@ -144,7 +151,8 @@ class ProductIOProduct extends ProductIONewProduct {
             description: description,
             stockQuantity: stockQuantity,
             stockWeightUnit: stockWeightUnit,
-            imageFilePath: imageFilePath);
+            imageFilePath: imageFilePath,
+            date: date);
 
   @override
   ProductIOProduct copyWith(
@@ -158,7 +166,8 @@ class ProductIOProduct extends ProductIONewProduct {
       String? description,
       double? stockQuantity,
       String? stockWeightUnit,
-      String? imageFilePath}) {
+      String? imageFilePath,
+      DateTime? date}) {
     return ProductIOProduct.fromNewProduct(id ?? this.id,
         newProduct: super.copyWith(
             itemName: itemName,
@@ -170,7 +179,8 @@ class ProductIOProduct extends ProductIONewProduct {
             description: description,
             stockQuantity: stockQuantity,
             stockWeightUnit: stockWeightUnit,
-            imageFilePath: imageFilePath));
+            imageFilePath: imageFilePath,
+            date: date));
   }
 
   @override
@@ -191,7 +201,8 @@ class ProductIOProduct extends ProductIONewProduct {
       description: newProduct.description,
       stockQuantity: newProduct.stockQuantity,
       stockWeightUnit: newProduct.stockWeightUnit,
-      imageFilePath: newProduct.imageFilePath);
+      imageFilePath: newProduct.imageFilePath,
+      date: newProduct.date);
 
   factory ProductIOProduct.fromMap(Map<String, dynamic> map) {
     return ProductIOProduct.fromNewProduct(map['id'] ?? '', newProduct: ProductIONewProduct.fromMap(map));

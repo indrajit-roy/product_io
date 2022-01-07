@@ -1,4 +1,4 @@
-import 'package:flutter/src/foundation/key.dart';
+import 'package:flutter/widgets.dart';
 import 'package:product_io/core/widgets/buttons.dart';
 import 'package:product_io/core/widgets/text_views.dart';
 

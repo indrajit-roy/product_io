@@ -30,6 +30,7 @@ class NewProductEntity {
 class ProductEntity extends NewProductEntity {
   final String id;
   final ImageProvider? image;
+  final DateTime date;
   ProductEntity(
       {required this.id,
       this.image,
@@ -42,7 +43,8 @@ class ProductEntity extends NewProductEntity {
       String? description,
       required double stockQuantity,
       required WeightUnit stockWeightUnit,
-      String? imageFilePath})
+      String? imageFilePath,
+      required this.date})
       : super(
             itemName: itemName,
             price: price,
@@ -70,6 +72,7 @@ class ProductEntity extends NewProductEntity {
         description: description,
         stockQuantity: stockQuantity,
         stockWeightUnit: stockWeightUnit,
-        imageFilePath: imageFilePath);
+        imageFilePath: imageFilePath,
+        date: date);
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:product_io/core/services/product/models/product_io_product.dart';
 import 'package:product_io/core/services/product_io_services.dart';
 import 'package:product_io/inventory/domain/entities/product_entity.dart';
@@ -27,9 +28,20 @@ class ProductRepository implements ProductRepositoryInterface {
   }
 
   @override
+  Future<List<ProductEntity>> getProductRecords({required String id}) async {
+    try {
+      final result = await api.getProductRecords(id);
+      return result.map((e) => e.entity).toList();
+    } on Exception catch (e) {
+      throw e;
+    }
+  }
+
+  @override
   Future<ProductEntity> getProduct({required String id}) async {
     try {
       final result = await api.getProduct(id: id);
+      debugPrint("cat : ${result.category}, des : ${result.description}");
       return result.entity;
     } on Exception catch (e) {
       throw e;
@@ -54,10 +66,13 @@ extension on ProductEntity {
       price: price,
       discountedPrice: discountedPrice,
       quantity: quantity,
+      category: category,
+      description: description,
       weightUnit: weightUnit.name,
       stockQuantity: stockQuantity,
       stockWeightUnit: stockWeightUnit.name,
-      imageFilePath: imageFilePath);
+      imageFilePath: imageFilePath,
+      date: date);
 }
 
 extension on NewProductEntity {
@@ -66,26 +81,33 @@ extension on NewProductEntity {
       price: price,
       discountedPrice: discountedPrice,
       quantity: quantity,
+      category: category,
+      description: description,
       weightUnit: weightUnit.name,
       stockQuantity: stockQuantity,
       stockWeightUnit: stockWeightUnit.name,
-      imageFilePath: imageFilePath);
+      imageFilePath: imageFilePath,
+      date: DateTime.now());
 }
 
 extension on ProductIOProduct {
   ProductEntity get entity {
     final weightUnitString = WeightUnit.values.asNameMap()[weightUnit];
-    if (weightUnitString != null) {
+    final stockWeightUnitString = WeightUnit.values.asNameMap()[stockWeightUnit];
+    if (weightUnitString != null && stockWeightUnitString != null) {
       return ProductEntity(
           id: id,
           itemName: itemName,
           price: price,
           discountedPrice: discountedPrice,
           quantity: quantity,
+          category: category,
+          description: description,
           weightUnit: weightUnitString,
           stockQuantity: stockQuantity,
-          stockWeightUnit: weightUnitString,
-          imageFilePath: imageFilePath);
+          stockWeightUnit: stockWeightUnitString,
+          imageFilePath: imageFilePath,
+          date: date);
     } else {
       throw Exception("Weight unit does not match existing enums, value : $weightUnit");
     }

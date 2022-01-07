@@ -31,5 +31,6 @@ abstract class ProductServiceInterface {
   Future<ProductIOProduct> addProduct(ProductIONewProduct newProduct);
   Future<List<ProductIOProduct>> getProducts({String category});
   Future<ProductIOProduct> getProduct({required String id});
-  Future<ProductIOProduct> setProduct({required ProductIOProduct product,required ProductIOProduct oldProduct});
+  Future<ProductIOProduct> setProduct({required ProductIOProduct product, required ProductIOProduct oldProduct});
+  Future<List<ProductIOProduct>> getProductRecords(String productId);
 }

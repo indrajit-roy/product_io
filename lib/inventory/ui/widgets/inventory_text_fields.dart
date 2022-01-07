@@ -2,7 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:product_io/core/widgets/text_fields.dart';
 
 class InventoryTextField extends ProductIOTextField {
-  const InventoryTextField({Key? key}) : super(key: key);
+  InventoryTextField({Key? key, String? hintText, void Function(String)? onChanged})
+      : super(
+          key: key,
+          onChanged: onChanged,
+          inputDecoration: InputDecoration(
+            hintText: hintText ?? "",
+          ),
+        );
+        
   const InventoryTextField.itemName({Key? key, String? initailText, void Function(String)? onChanged})
       : super(
           key: key,

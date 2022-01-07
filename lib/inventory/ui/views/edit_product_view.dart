@@ -53,14 +53,14 @@ class _EditProductViewState extends State<EditProductView> {
                 Expanded(
                   flex: 1,
                   child: InventoryTextField.price(
-                    initailText: vm.price.toString(),
+                    initailText: vm.price?.toString(),
                     onChanged: (p0) => vm.price = double.tryParse(p0),
                   ),
                 ),
                 Expanded(
                   flex: 1,
                   child: InventoryTextField.discountedPrice(
-                    initailText: vm.discountedPrice.toString(),
+                    initailText: vm.discountedPrice?.toString(),
                     onChanged: (p0) => vm.discountedPrice = double.tryParse(p0),
                   ),
                 ),
@@ -71,13 +71,14 @@ class _EditProductViewState extends State<EditProductView> {
                 Expanded(
                   flex: 1,
                   child: InventoryTextField.quantity(
-                    initailText: vm.quantity.toString(),
+                    initailText: vm.quantity?.toString(),
                     onChanged: (p0) => vm.quantity = double.tryParse(p0),
                   ),
                 ),
-                Expanded(
-                  flex: 1,
+                Align(
+                  alignment: Alignment.centerRight,
                   child: DropdownButton<WeightUnit>(
+                    underline: const SizedBox(),
                     alignment: Alignment.bottomCenter,
                     hint: ProductIOText(vm.weightUnit.name),
                     items: [
@@ -111,36 +112,51 @@ class _EditProductViewState extends State<EditProductView> {
                 Expanded(
                   flex: 1,
                   child: InventoryTextField.stockQuantity(
-                    initailText: vm.stockQuantity.toString(),
+                    initailText: vm.stockQuantity?.toString(),
                     onChanged: (p0) => vm.stockQuantity = double.tryParse(p0),
                   ),
                 ),
-                Expanded(
-                  flex: 1,
-                  child: DropdownButton<WeightUnit>(
-                    alignment: Alignment.bottomCenter,
-                    hint: ProductIOText(vm.stockWeightUnit.name),
-                    items: [
-                      ...WeightUnit.values
-                          .map((e) => DropdownMenuItem<WeightUnit>(
-                                child: ProductIOText(e.name),
-                                value: e,
-                              ))
-                          .toList()
-                    ],
-                    onChanged: (value) {
-                      if (value != null) {
-                        vm.stockWeightUnit = value;
-                        setState(() {});
-                      }
-                    },
-                  ),
+                DropdownButton<WeightUnit>(
+                  underline: const SizedBox(),
+                  alignment: Alignment.bottomCenter,
+                  hint: ProductIOText(vm.stockWeightUnit.name),
+                  items: [
+                    ...WeightUnit.values
+                        .map((e) => DropdownMenuItem<WeightUnit>(
+                              child: ProductIOText(e.name),
+                              value: e,
+                            ))
+                        .toList()
+                  ],
+                  onChanged: (value) {
+                    if (value != null) {
+                      vm.stockWeightUnit = value;
+                      setState(() {});
+                    }
+                  },
                 ),
               ],
             ),
-            InventoryButton.editProduct(
-              onPressed: () => vm.onSubmit(),
-            )
+            StreamBuilder<bool>(
+                initialData: vm.isUpdating.value,
+                stream: vm.isUpdating,
+                builder: (context, snapshot) {
+                  if (snapshot.data == true) {
+                    return ElevatedButton(
+                        onPressed: () {},
+                        child: const Center(
+                            child: SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ))));
+                  }
+                  return InventoryButton.editProduct(
+                    onPressed: () => vm.onSubmit(),
+                  );
+                })
           ],
         ),
       )),
