@@ -31,24 +31,34 @@ class _SignInViewState extends State<SignInView> {
     return Scaffold(
       body: SafeArea(
           child: ListView(
-        // ignore: prefer_const_literals_to_create_immutables
         children: [
+          Image.asset(
+              "product_io_logo.png"),
           AuthTextField.email(
+            context: context,
             onChanged: (p0) => vm.email = p0,
           ),
           AuthTextField.password(
+            context: context,
             onChanged: (p0) => vm.password = p0,
           ),
-          AuthButton.signIn(
-            onPressed: vm.onSubmit,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: AuthButton.signIn(
+              onPressed: vm.onSubmit,
+            ),
           ),
-          AuthButton(
-            onPressed: () {
-              navigatorKey.currentState?.pushReplacement(MaterialPageRoute(
-                builder: (context) => const SignUpView(),
-              ));
-            },
-            child: const Text("Sign Up instead"),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: AuthButton.text(
+              text: "Sign Up Instead",
+              context: context,
+              onPressed: () {
+                navigatorKey.currentState?.pushReplacement(MaterialPageRoute(
+                  builder: (context) => const SignUpView(),
+                ));
+              },
+            ),
           )
         ],
       )),

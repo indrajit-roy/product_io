@@ -28,9 +28,10 @@ abstract class AuthServiceInterface {
 }
 
 abstract class ProductServiceInterface {
-  Future<ProductIOProduct> addProduct(ProductIONewProduct newProduct);
+  Future<ProductIOProduct> addProduct(ProductIONewProduct newProduct, {void Function(double progress)? onProgress});
   Future<List<ProductIOProduct>> getProducts({String category});
   Future<ProductIOProduct> getProduct({required String id});
-  Future<ProductIOProduct> setProduct({required ProductIOProduct product, required ProductIOProduct oldProduct});
+  Future<ProductIOProduct> setProduct(
+      {required ProductIOProduct product, required ProductIOProduct oldProduct, void Function(double progress)? onProgress});
   Future<List<ProductIOProduct>> getProductRecords(String productId);
 }

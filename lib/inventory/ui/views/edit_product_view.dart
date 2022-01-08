@@ -44,7 +44,9 @@ class _EditProductViewState extends State<EditProductView> {
               width: double.infinity,
               onImageChanged: (imageFile) => vm.imageFilePath = imageFile.path,
             ),
-            InventoryTextField.itemName(
+            InventoryTextField.neoScaffold(
+              context: context,
+              hintText: "Item Name",
               initailText: vm.itemName,
               onChanged: (p0) => vm.itemName = p0,
             ),
@@ -52,14 +54,18 @@ class _EditProductViewState extends State<EditProductView> {
               children: [
                 Expanded(
                   flex: 1,
-                  child: InventoryTextField.price(
+                  child: InventoryTextField.neoScaffold(
+                    context: context,
+                    hintText: "Price",
                     initailText: vm.price?.toString(),
                     onChanged: (p0) => vm.price = double.tryParse(p0),
                   ),
                 ),
                 Expanded(
                   flex: 1,
-                  child: InventoryTextField.discountedPrice(
+                  child: InventoryTextField.neoScaffold(
+                    context: context,
+                    hintText: "Discounted Price",
                     initailText: vm.discountedPrice?.toString(),
                     onChanged: (p0) => vm.discountedPrice = double.tryParse(p0),
                   ),
@@ -70,7 +76,9 @@ class _EditProductViewState extends State<EditProductView> {
               children: [
                 Expanded(
                   flex: 1,
-                  child: InventoryTextField.quantity(
+                  child: InventoryTextField.neoScaffold(
+                    context: context,
+                    hintText: "Quantity",
                     initailText: vm.quantity?.toString(),
                     onChanged: (p0) => vm.quantity = double.tryParse(p0),
                   ),
@@ -80,7 +88,7 @@ class _EditProductViewState extends State<EditProductView> {
                   child: DropdownButton<WeightUnit>(
                     underline: const SizedBox(),
                     alignment: Alignment.bottomCenter,
-                    hint: ProductIOText(vm.weightUnit.name),
+                    hint: ProductIOText(vm.weightUnit.abbr),
                     items: [
                       ...WeightUnit.values
                           .map((e) => DropdownMenuItem<WeightUnit>(
@@ -99,11 +107,15 @@ class _EditProductViewState extends State<EditProductView> {
                 ),
               ],
             ),
-            InventoryTextField.category(
+            InventoryTextField.neoScaffold(
+              context: context,
+              hintText: "Category",
               initailText: vm.category,
               onChanged: (p0) => vm.category = p0,
             ),
-            InventoryTextField.description(
+            InventoryTextField.neoScaffold(
+              context: context,
+              hintText: "Description",
               initailText: vm.description,
               onChanged: (p0) => vm.description = p0,
             ),
@@ -111,7 +123,9 @@ class _EditProductViewState extends State<EditProductView> {
               children: [
                 Expanded(
                   flex: 1,
-                  child: InventoryTextField.stockQuantity(
+                  child: InventoryTextField.neoScaffold(
+                    context: context,
+                    hintText: "Total Stock",
                     initailText: vm.stockQuantity?.toString(),
                     onChanged: (p0) => vm.stockQuantity = double.tryParse(p0),
                   ),
@@ -119,7 +133,7 @@ class _EditProductViewState extends State<EditProductView> {
                 DropdownButton<WeightUnit>(
                   underline: const SizedBox(),
                   alignment: Alignment.bottomCenter,
-                  hint: ProductIOText(vm.stockWeightUnit.name),
+                  hint: ProductIOText(vm.stockWeightUnit.abbr),
                   items: [
                     ...WeightUnit.values
                         .map((e) => DropdownMenuItem<WeightUnit>(
@@ -137,26 +151,36 @@ class _EditProductViewState extends State<EditProductView> {
                 ),
               ],
             ),
-            StreamBuilder<bool>(
-                initialData: vm.isUpdating.value,
-                stream: vm.isUpdating,
-                builder: (context, snapshot) {
-                  if (snapshot.data == true) {
-                    return ElevatedButton(
-                        onPressed: () {},
-                        child: const Center(
-                            child: SizedBox(
-                                height: 24,
-                                width: 24,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
-                                ))));
-                  }
-                  return InventoryButton.editProduct(
-                    onPressed: () => vm.onSubmit(),
-                  );
-                })
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: StreamBuilder<bool>(
+                  initialData: vm.isUpdating.value,
+                  stream: vm.isUpdating,
+                  builder: (context, snapshot) {
+                    if (snapshot.data == true) {
+                      return ElevatedButton(
+                          onPressed: () {},
+                          child: Center(
+                              child: SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: StreamBuilder<double>(
+                                initialData: vm.progress.value,
+                                stream: vm.progress,
+                                builder: (context, snapshot) {
+                                  return CircularProgressIndicator(
+                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    strokeWidth: 2,
+                                    value: snapshot.data == 0 ? null : snapshot.data,
+                                  );
+                                }),
+                          )));
+                    }
+                    return InventoryButton.editProduct(
+                      onPressed: () => vm.onSubmit(),
+                    );
+                  }),
+            )
           ],
         ),
       )),

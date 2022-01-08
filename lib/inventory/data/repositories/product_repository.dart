@@ -8,9 +8,9 @@ import 'package:product_io/inventory/ui/view_models/edit_product_view_model.dart
 class ProductRepository implements ProductRepositoryInterface {
   final api = ProductIOServices.singleton.product;
   @override
-  Future<ProductEntity> addProduct(NewProductEntity newProduct) async {
+  Future<ProductEntity> addProduct(NewProductEntity newProduct, {void Function(double progress)? onProgress}) async {
     try {
-      final result = await api.addProduct(newProduct.newProductIO);
+      final result = await api.addProduct(newProduct.newProductIO, onProgress: onProgress);
       return result.entity;
     } on Exception catch (e) {
       throw e;
@@ -49,9 +49,9 @@ class ProductRepository implements ProductRepositoryInterface {
   }
 
   @override
-  Future<ProductEntity> setProduct({required ProductEntity product, required ProductEntity oldProduct}) async {
+  Future<ProductEntity> setProduct({required ProductEntity product, required ProductEntity oldProduct,void Function(double progress)? onProgress}) async {
     try {
-      final result = await api.setProduct(product: product.productIO, oldProduct: oldProduct.productIO);
+      final result = await api.setProduct(product: product.productIO, oldProduct: oldProduct.productIO,onProgress: onProgress);
       return result.entity;
     } on Exception catch (e) {
       throw e;

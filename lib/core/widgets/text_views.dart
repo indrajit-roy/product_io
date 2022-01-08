@@ -4,7 +4,15 @@ class ProductIOText extends StatelessWidget {
   final String text;
   final ProductIOTextStyle? style;
   final int? maxLines;
+
   const ProductIOText(
+    this.text, {
+    Key? key,
+    this.style,
+    this.maxLines,
+  }) :  super(key: key);
+
+  const ProductIOText.primary(
     this.text, {
     Key? key,
     this.style,

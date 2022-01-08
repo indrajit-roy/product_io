@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:product_io/core/common/product_io_ui_service.dart';
 import 'package:product_io/inventory/data/repositories/image_repository.dart';
 import 'package:product_io/inventory/domain/entities/product_entity.dart';
@@ -40,7 +39,7 @@ class ProductItemViewModel {
       ProductIOUIService.showToast("Something went wrong");
     } finally {
       if (isFetching.value == true) isFetching.value = false;
-      _fetchImage();
+      if (image.value is AssetImage) _fetchImage();
     }
   }
 

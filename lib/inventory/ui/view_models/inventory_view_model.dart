@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:product_io/inventory/data/repositories/product_repository.dart';
 import 'package:product_io/inventory/domain/entities/product_entity.dart';
 import 'package:product_io/inventory/domain/use_cases/real_time_products.dart';
@@ -32,30 +31,38 @@ class InventoryViewModel {
         products.value = baseProducts;
         return;
       }
-      products.value = baseProducts
-          .where((element) =>
-              element.itemName.toLowerCase().startsWith(value) ||
-              element.itemName.toLowerCase().contains(value) ||
-              element.price.toString().toLowerCase().contains(value) ||
-              element.discountedPrice.toString().toLowerCase().contains(value))
-          .toList();
+      _filterBySearch(value);
     });
     dateRange.listen((value) {
       debugPrint("dt dbg start :${value.start} end: ${value.end}");
-      products.value = baseProducts
-          .where((element) => element.date.isBefore(value.end.add(const Duration(days: 1))) && element.date.isAfter(value.start))
-          .toList();
+      _filterByDate(value);
     });
   }
 
+  void _filterByDate(DateTimeRange dateRange) => products.value = baseProducts
+      .where((element) => element.date.isBefore(dateRange.end.add(const Duration(days: 1))) && element.date.isAfter(dateRange.start))
+      .toList();
+
+  void _filterBySearch(String value) => products.value = baseProducts
+      .where((element) =>
+          element.itemName.toLowerCase().startsWith(value) ||
+          element.itemName.toLowerCase().contains(value) ||
+          element.price.toString().toLowerCase().contains(value) ||
+          element.discountedPrice.toString().toLowerCase().contains(value))
+      .toList();
+
   Future<void> getProducts() async {
     try {
-      isFetching.value = true;
+      if (!isFetching.isClosed) {
+        isFetching.value = true;
+      }
       final result = await ProductRepository().getProducts();
-      isFetching.value = false;
       if (!products.isClosed) products.value = baseProducts = result;
+      if (!isFetching.isClosed) {
+        isFetching.value = false;
+      }
     } on Exception catch (e) {
-      // TODO
+      debugPrint("getProducts() exception $e");
     }
   }
 

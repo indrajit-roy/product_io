@@ -13,17 +13,20 @@ class AddProductViewModel extends EditProductViewModel {
     if (_checkIfCanAddProduct) {
       debugPrint("Hello inside Add");
       isUpdating.value = true;
-      await ProductRepository().addProduct(NewProductEntity(
-          itemName: itemName!,
-          price: price!,
-          discountedPrice: discountedPrice!,
-          category: category,
-          description: description,
-          quantity: quantity!,
-          weightUnit: weightUnit,
-          stockQuantity: stockQuantity!,
-          stockWeightUnit: stockWeightUnit,
-          imageFilePath: imageFilePath));
+      await ProductRepository().addProduct(
+        NewProductEntity(
+            itemName: itemName!,
+            price: price!,
+            discountedPrice: discountedPrice!,
+            category: category,
+            description: description,
+            quantity: quantity!,
+            weightUnit: weightUnit,
+            stockQuantity: stockQuantity!,
+            stockWeightUnit: stockWeightUnit,
+            imageFilePath: imageFilePath),
+        onProgress: (p) => progress.value = p,
+      );
       isUpdating.value = false;
       navigatorKey.currentState?.pop(true);
     } else {

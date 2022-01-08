@@ -35,6 +35,7 @@ class EditProductViewModel {
   String? imageFilePath;
 
   final isUpdating = BehaviorSubject.seeded(false);
+  final progress = BehaviorSubject.seeded(0.0);
   Future<void> init() async {}
   void dispose() {
     isUpdating.close();
@@ -75,20 +76,22 @@ class UpdateProductViewModel extends EditProductViewModel {
     if (_didProductChange) {
       isUpdating.value = true;
       final updatedProduct = await ProductRepository().setProduct(
-          oldProduct: entity,
-          product: ProductEntity(
-              id: entity.id,
-              itemName: itemName ?? entity.itemName,
-              price: price ?? entity.price,
-              discountedPrice: discountedPrice ?? entity.discountedPrice,
-              category: category ?? entity.category,
-              description: description ?? entity.description,
-              quantity: quantity ?? entity.quantity,
-              weightUnit: weightUnit,
-              stockQuantity: stockQuantity ?? entity.stockQuantity,
-              stockWeightUnit: stockWeightUnit,
-              imageFilePath: imageFilePath,
-              date: DateTime.now()));
+        oldProduct: entity,
+        product: ProductEntity(
+            id: entity.id,
+            itemName: itemName ?? entity.itemName,
+            price: price ?? entity.price,
+            discountedPrice: discountedPrice ?? entity.discountedPrice,
+            category: category ?? entity.category,
+            description: description ?? entity.description,
+            quantity: quantity ?? entity.quantity,
+            weightUnit: weightUnit,
+            stockQuantity: stockQuantity ?? entity.stockQuantity,
+            stockWeightUnit: stockWeightUnit,
+            imageFilePath: imageFilePath,
+            date: DateTime.now()),
+        onProgress: (p) => progress.value = p,
+      );
       isUpdating.value = false;
       ProductIOUIService.showToast("Changes saved");
       navigatorKey.currentState?.pop<ProductEntity>(updatedProduct);

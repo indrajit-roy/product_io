@@ -12,12 +12,12 @@ class ProductServiceFirebase implements ProductServiceInterface {
   final service = FirebaseFirestore.instance;
 
   @override
-  Future<ProductIOProduct> addProduct(ProductIONewProduct newProduct) async {
+  Future<ProductIOProduct> addProduct(ProductIONewProduct newProduct, {void Function(double progress)? onProgress}) async {
     try {
       final result = await service.collection("products").add(newProduct.toMap());
       String? refPath;
       if (newProduct.imageFilePath != null) {
-        refPath = await _uploadToStorage(result.id, newProduct);
+        refPath = await _uploadToStorage(result.id, newProduct, onProgress: onProgress);
       }
       final doc = await result.get();
       if (doc.data() != null) {
@@ -34,11 +34,12 @@ class ProductServiceFirebase implements ProductServiceInterface {
     }
   }
 
-  Future<String?> _uploadToStorage(String fileName, ProductIONewProduct product) async {
+  Future<String?> _uploadToStorage(String fileName, ProductIONewProduct product, {void Function(double progress)? onProgress}) async {
     Completer<String?> completer = Completer<String?>();
     final task = FirebaseStorage.instance.ref("products").child("$fileName.jpg").putFile(File(product.imageFilePath!));
     task.snapshotEvents.listen((event) {
       debugPrint("uploading to firebase ${event.bytesTransferred}");
+      onProgress?.call(event.bytesTransferred / event.totalBytes);
       if (event.bytesTransferred == event.totalBytes) if (!completer.isCompleted) completer.complete(event.ref.fullPath);
     }, onError: (e, err) {
       debugPrint("uploading to firebase error $e, $err");
@@ -55,7 +56,8 @@ class ProductServiceFirebase implements ProductServiceInterface {
       final result = await service.collection("products").get();
       return result.docs.map((e) {
         return ProductIOProduct.fromNewProduct(e.id, newProduct: ProductIONewProduct.fromMap(e.data()));
-      }).toList()..sort((a,b)=> b.date.compareTo(a.date));
+      }).toList()
+        ..sort((a, b) => b.date.compareTo(a.date));
     } on Exception catch (e) {
       throw e;
     }
@@ -76,7 +78,8 @@ class ProductServiceFirebase implements ProductServiceInterface {
   }
 
   @override
-  Future<ProductIOProduct> setProduct({required ProductIOProduct product, required ProductIOProduct oldProduct}) async {
+  Future<ProductIOProduct> setProduct(
+      {required ProductIOProduct product, required ProductIOProduct oldProduct, void Function(double progress)? onProgress}) async {
     bool _checkIfToBeRecorded() =>
         product.itemName != oldProduct.itemName ||
         product.price != oldProduct.price ||
@@ -91,7 +94,7 @@ class ProductServiceFirebase implements ProductServiceInterface {
       ProductIOProduct updatedProduct = product;
       if (oldProduct.imageFilePath != updatedProduct.imageFilePath) {
         try {
-          updatedProduct.imageFilePath = await _uploadToStorage(updatedProduct.id, product);
+          updatedProduct.imageFilePath = await _uploadToStorage(updatedProduct.id, product,onProgress: onProgress);
         } on Exception catch (e) {
           updatedProduct.imageFilePath = oldProduct.imageFilePath;
         }

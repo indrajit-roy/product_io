@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:product_io/core/widgets/text_fields.dart';
 
 class InventoryTextField extends ProductIOTextField {
-  InventoryTextField({Key? key, String? hintText, void Function(String)? onChanged})
+  InventoryTextField({Key? key, String? hintText, void Function(String)? onChanged, required BuildContext context})
       : super(
           key: key,
           onChanged: onChanged,
@@ -10,17 +10,11 @@ class InventoryTextField extends ProductIOTextField {
             hintText: hintText ?? "",
           ),
         );
-        
-  const InventoryTextField.itemName({Key? key, String? initailText, void Function(String)? onChanged})
-      : super(
-          key: key,
-          onChanged: onChanged,
-          initialText: initailText,
-          inputDecoration: const InputDecoration(
-            hintText: "Item Name",
-          ),
-        );
-  const InventoryTextField.price({Key? key, String? initailText, void Function(String)? onChanged})
+
+  InventoryTextField.neoScaffold({Key? key, String? hintText, String? initailText, void Function(String)? onChanged, required BuildContext context})
+      : super.neoScaffold(key: key, onChanged: onChanged, initialText: initailText, context: context, hintHext: hintText);
+      
+  const InventoryTextField.price({Key? key, String? initailText, void Function(String)? onChanged, required BuildContext context})
       : super(
           key: key,
           onChanged: onChanged,
@@ -29,7 +23,7 @@ class InventoryTextField extends ProductIOTextField {
             hintText: "Price",
           ),
         );
-  const InventoryTextField.discountedPrice({Key? key, String? initailText, void Function(String)? onChanged})
+  const InventoryTextField.discountedPrice({Key? key, String? initailText, void Function(String)? onChanged, required BuildContext context})
       : super(
           key: key,
           onChanged: onChanged,
@@ -38,7 +32,7 @@ class InventoryTextField extends ProductIOTextField {
             hintText: "Discounted Price",
           ),
         );
-  const InventoryTextField.quantity({Key? key, String? initailText, void Function(String)? onChanged})
+  const InventoryTextField.quantity({Key? key, String? initailText, void Function(String)? onChanged, required BuildContext context})
       : super(
           key: key,
           onChanged: onChanged,
@@ -47,7 +41,7 @@ class InventoryTextField extends ProductIOTextField {
             hintText: "Quantity",
           ),
         );
-  const InventoryTextField.category({Key? key, String? initailText, void Function(String)? onChanged})
+  const InventoryTextField.category({Key? key, String? initailText, void Function(String)? onChanged, required BuildContext context})
       : super(
           key: key,
           onChanged: onChanged,
@@ -56,7 +50,7 @@ class InventoryTextField extends ProductIOTextField {
             hintText: "Category",
           ),
         );
-  const InventoryTextField.description({Key? key, String? initailText, void Function(String)? onChanged})
+  const InventoryTextField.description({Key? key, String? initailText, void Function(String)? onChanged, required BuildContext context})
       : super(
           key: key,
           onChanged: onChanged,
@@ -65,7 +59,7 @@ class InventoryTextField extends ProductIOTextField {
             hintText: "Description",
           ),
         );
-  const InventoryTextField.stockQuantity({Key? key, String? initailText, void Function(String)? onChanged})
+  const InventoryTextField.stockQuantity({Key? key, String? initailText, void Function(String)? onChanged, required BuildContext context})
       : super(
           key: key,
           onChanged: onChanged,

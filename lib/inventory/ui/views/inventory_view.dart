@@ -64,25 +64,29 @@ class _InventoryViewState extends State<InventoryView> with RouteAware {
             Row(
               children: [
                 Expanded(
-                  child: InventoryTextField(
+                  child: InventoryTextField.neoScaffold(
                     hintText: "Search",
+                    context: context,
                     onChanged: (p0) {
                       vm.searchInput.value = p0.toLowerCase();
                     },
                   ),
                 ),
-                ElevatedButton(
-                    onPressed: () async {
-                      final range = await showDateRangePicker(
-                        context: context,
-                        firstDate: DateTime.utc(2021),
-                        lastDate: DateTime.now(),
-                      );
-                      if (range != null) {
-                        vm.dateRange.value = range;
-                      }
-                    },
-                    child: const Text("Select Date"))
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ElevatedButton(
+                      onPressed: () async {
+                        final range = await showDateRangePicker(
+                          context: context,
+                          firstDate: DateTime.utc(2021),
+                          lastDate: DateTime.now(),
+                        );
+                        if (range != null) {
+                          vm.dateRange.value = range;
+                        }
+                      },
+                      child: const Text("Select Date")),
+                )
               ],
             ),
             Expanded(
@@ -103,21 +107,25 @@ class _InventoryViewState extends State<InventoryView> with RouteAware {
                           return const Center(child: ProductIOText("No products in Inventory"));
                         });
                   }
-                  return ListView.builder(
-                    itemExtent: 130,
-                    itemCount: snapshot.data?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final product = snapshot.data![index];
-                      return Padding(
-                        key: Key("ProductItemViewPadding#${product.id}"),
-                        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
-                        child: ProductItemView(
-                          key: Key("ProductItemView#${product.id}"),
-                          id: product.id,
-                          entity: product,
-                        ),
-                      );
-                    },
+                  return RefreshIndicator(
+                    onRefresh: () => vm.getProducts(),
+                    child: ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemExtent: 130,
+                      itemCount: snapshot.data?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        final product = snapshot.data![index];
+                        return Padding(
+                          key: Key("ProductItemViewPadding#${product.id}"),
+                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
+                          child: ProductItemView(
+                            key: Key("ProductItemView#${product.id}"),
+                            id: product.id,
+                            entity: product,
+                          ),
+                        );
+                      },
+                    ),
                   );
                 },
               ),

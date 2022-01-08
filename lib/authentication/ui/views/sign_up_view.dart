@@ -32,24 +32,27 @@ class _SignUpViewState extends State<SignUpView> {
     return Scaffold(
       body: SafeArea(
         child: ListView(
-          // ignore: prefer_const_literals_to_create_immutables
           children: [
+            Image.asset("product_io_logo.png"),
             AuthTextField.email(
+              context: context,
               onChanged: (p0) => vm.email = p0,
             ),
             AuthTextField.password(
+              context: context,
               onChanged: (p0) => vm.password = p0,
             ),
             AuthButton.signUp(
               onPressed: vm.onSubmit,
             ),
-            AuthButton(
+            AuthButton.text(
+              context: context,
+              text: "Sign In instead",
               onPressed: () {
                 navigatorKey.currentState?.pushReplacement(MaterialPageRoute(
                   builder: (context) => const SignInView(),
                 ));
               },
-              child: const Text("Sign Up instead"),
             )
           ],
         ),
